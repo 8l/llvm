@@ -39,7 +39,7 @@
 #include <sys/link_elf.h>
 #endif
 
-#if SANITIZER_ANDROID || SANITIZER_FREEBSD
+#if SANITIZER_ANDROID || SANITIZER_FREEBSD || SANITIZER_NONGNU
 #include <ucontext.h>
 extern "C" void* _DYNAMIC;
 #else
@@ -86,7 +86,7 @@ void AsanApplyToGlobals(globals_op_fptr op, const void *needle) {
   UNIMPLEMENTED();
 }
 
-#if SANITIZER_ANDROID
+#if SANITIZER_ANDROID || SANITIZER_NONGNU
 // FIXME: should we do anything for Android?
 void AsanCheckDynamicRTPrereqs() {}
 void AsanCheckIncompatibleRT() {}

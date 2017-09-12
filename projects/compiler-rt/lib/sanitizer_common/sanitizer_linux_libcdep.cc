@@ -148,7 +148,7 @@ bool SanitizerGetThreadName(char *name, int max_len) {
 #endif
 }
 
-#if !SANITIZER_FREEBSD && !SANITIZER_ANDROID && !SANITIZER_GO
+#if !SANITIZER_FREEBSD && !SANITIZER_ANDROID && !SANITIZER_GO && !SANITIZER_NONGNU
 static uptr g_tls_size;
 
 #ifdef __i386__
@@ -180,7 +180,7 @@ void InitTlsSize() { }
 
 #if (defined(__x86_64__) || defined(__i386__) || defined(__mips__) \
     || defined(__aarch64__) || defined(__powerpc64__) || defined(__s390__) \
-    || defined(__arm__)) && SANITIZER_LINUX && !SANITIZER_ANDROID
+    || defined(__arm__)) && SANITIZER_LINUX && !SANITIZER_ANDROID && !SANITIZER_NONGNU
 // sizeof(struct pthread) from glibc.
 static atomic_uintptr_t kThreadDescriptorSize;
 
@@ -335,7 +335,7 @@ uptr ThreadSelf() {
 
 #if !SANITIZER_GO
 static void GetTls(uptr *addr, uptr *size) {
-#if SANITIZER_LINUX && !SANITIZER_ANDROID
+#if SANITIZER_LINUX && !SANITIZER_ANDROID && !SANITIZER_NONGNU
 # if defined(__x86_64__) || defined(__i386__) || defined(__s390__)
   *addr = ThreadSelf();
   *size = GetTlsSize();
@@ -362,7 +362,7 @@ static void GetTls(uptr *addr, uptr *size) {
     *addr = (uptr) dtv[2];
     *size = (*addr == 0) ? 0 : ((uptr) segbase[0] - (uptr) dtv[2]);
   }
-#elif SANITIZER_ANDROID
+#elif SANITIZER_ANDROID || SANITIZER_NONGNU
   *addr = 0;
   *size = 0;
 #else
@@ -373,7 +373,7 @@ static void GetTls(uptr *addr, uptr *size) {
 
 #if !SANITIZER_GO
 uptr GetTlsSize() {
-#if SANITIZER_FREEBSD || SANITIZER_ANDROID
+#if SANITIZER_FREEBSD || SANITIZER_ANDROID || SANITIZER_NONGNU
   uptr addr, size;
   GetTls(&addr, &size);
   return size;

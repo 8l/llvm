@@ -138,12 +138,11 @@ typedef struct user_fpregs elf_fpregset_t;
 
 #if SANITIZER_LINUX && !SANITIZER_ANDROID
 #include <glob.h>
-#include <obstack.h>
 #include <mqueue.h>
-#include <net/if_ppp.h>
-#include <netax25/ax25.h>
-#include <netipx/ipx.h>
-#include <netrom/netrom.h>
+#include <linux/if_ppp.h>
+#include <linux/ax25.h>
+#include <linux/ipx.h>
+#include <linux/netrom.h>
 #if HAVE_RPC_XDR_H
 # include <rpc/xdr.h>
 #elif HAVE_TIRPC_RPC_XDR_H
@@ -159,7 +158,7 @@ typedef struct user_fpregs elf_fpregset_t;
 # include <sys/procfs.h>
 #endif
 #include <sys/user.h>
-#include <sys/ustat.h>
+#include <sys/statfs.h>
 #include <linux/cyclades.h>
 #include <linux/if_eql.h>
 #include <linux/if_plip.h>
@@ -251,7 +250,7 @@ namespace __sanitizer {
   unsigned struct_itimerspec_sz = sizeof(struct itimerspec);
 #endif // SANITIZER_LINUX || SANITIZER_FREEBSD
 
-#if SANITIZER_LINUX && !SANITIZER_ANDROID
+#if SANITIZER_LINUX && !SANITIZER_ANDROID && !SANITIZER_NONGNU
   unsigned struct_ustat_sz = sizeof(struct ustat);
   unsigned struct_rlimit64_sz = sizeof(struct rlimit64);
   unsigned struct_statvfs64_sz = sizeof(struct statvfs64);
@@ -309,7 +308,7 @@ unsigned struct_ElfW_Phdr_sz = sizeof(ElfW(Phdr));
 unsigned struct_ElfW_Phdr_sz = sizeof(Elf_Phdr);
 #endif
 
-#if (SANITIZER_LINUX || SANITIZER_FREEBSD) && !SANITIZER_ANDROID
+#if (SANITIZER_LINUX || SANITIZER_FREEBSD) && !SANITIZER_ANDROID && !SANITIZER_NONGNU
   int glob_nomatch = GLOB_NOMATCH;
   int glob_altdirfunc = GLOB_ALTDIRFUNC;
 #endif
@@ -403,7 +402,7 @@ unsigned struct_ElfW_Phdr_sz = sizeof(Elf_Phdr);
   unsigned struct_termios_sz = sizeof(struct termios);
   unsigned struct_winsize_sz = sizeof(struct winsize);
 
-#if SANITIZER_LINUX
+#if SANITIZER_LINUX && !SANITIZER_NONGNU
   unsigned struct_arpreq_sz = sizeof(struct arpreq);
   unsigned struct_cdrom_msf_sz = sizeof(struct cdrom_msf);
   unsigned struct_cdrom_multisession_sz = sizeof(struct cdrom_multisession);
@@ -453,7 +452,7 @@ unsigned struct_ElfW_Phdr_sz = sizeof(Elf_Phdr);
   unsigned struct_vt_mode_sz = sizeof(struct vt_mode);
 #endif // SANITIZER_LINUX || SANITIZER_FREEBSD
 
-#if SANITIZER_LINUX && !SANITIZER_ANDROID
+#if SANITIZER_LINUX && !SANITIZER_ANDROID && !SANITIZER_NONGNU
   unsigned struct_ax25_parms_struct_sz = sizeof(struct ax25_parms_struct);
   unsigned struct_cyclades_monitor_sz = sizeof(struct cyclades_monitor);
 #if EV_VERSION > (0x010000)
@@ -821,7 +820,7 @@ unsigned struct_ElfW_Phdr_sz = sizeof(Elf_Phdr);
   unsigned IOCTL_VT_WAITACTIVE = VT_WAITACTIVE;
 #endif // SANITIZER_LINUX || SANITIZER_FREEBSD
 
-#if SANITIZER_LINUX && !SANITIZER_ANDROID
+#if SANITIZER_LINUX && !SANITIZER_ANDROID && !SANITIZER_NONGNU
   unsigned IOCTL_CYGETDEFTHRESH = CYGETDEFTHRESH;
   unsigned IOCTL_CYGETDEFTIMEOUT = CYGETDEFTIMEOUT;
   unsigned IOCTL_CYGETMON = CYGETMON;
@@ -976,7 +975,7 @@ CHECK_SIZE_AND_OFFSET(dl_phdr_info, dlpi_phdr);
 CHECK_SIZE_AND_OFFSET(dl_phdr_info, dlpi_phnum);
 #endif // SANITIZER_LINUX || SANITIZER_FREEBSD
 
-#if (SANITIZER_LINUX || SANITIZER_FREEBSD) && !SANITIZER_ANDROID
+#if (SANITIZER_LINUX || SANITIZER_FREEBSD) && !SANITIZER_ANDROID && !SANITIZER_NONGNU
 CHECK_TYPE_SIZE(glob_t);
 CHECK_SIZE_AND_OFFSET(glob_t, gl_pathc);
 CHECK_SIZE_AND_OFFSET(glob_t, gl_pathv);
@@ -1010,6 +1009,7 @@ CHECK_TYPE_SIZE(iovec);
 CHECK_SIZE_AND_OFFSET(iovec, iov_base);
 CHECK_SIZE_AND_OFFSET(iovec, iov_len);
 
+#if !SANITIZER_NONGNU
 CHECK_TYPE_SIZE(msghdr);
 CHECK_SIZE_AND_OFFSET(msghdr, msg_name);
 CHECK_SIZE_AND_OFFSET(msghdr, msg_namelen);
@@ -1023,6 +1023,7 @@ CHECK_TYPE_SIZE(cmsghdr);
 CHECK_SIZE_AND_OFFSET(cmsghdr, cmsg_len);
 CHECK_SIZE_AND_OFFSET(cmsghdr, cmsg_level);
 CHECK_SIZE_AND_OFFSET(cmsghdr, cmsg_type);
+#endif
 
 COMPILER_CHECK(sizeof(__sanitizer_dirent) <= sizeof(dirent));
 CHECK_SIZE_AND_OFFSET(dirent, d_ino);
@@ -1125,7 +1126,7 @@ CHECK_SIZE_AND_OFFSET(mntent, mnt_passno);
 
 CHECK_TYPE_SIZE(ether_addr);
 
-#if (SANITIZER_LINUX || SANITIZER_FREEBSD) && !SANITIZER_ANDROID
+#if (SANITIZER_LINUX || SANITIZER_FREEBSD) && !SANITIZER_ANDROID && !SANITIZER_NONGNU
 CHECK_TYPE_SIZE(ipc_perm);
 # if SANITIZER_FREEBSD
 CHECK_SIZE_AND_OFFSET(ipc_perm, key);
@@ -1186,7 +1187,7 @@ CHECK_SIZE_AND_OFFSET(ifaddrs, ifa_dstaddr);
 CHECK_SIZE_AND_OFFSET(ifaddrs, ifa_data);
 #endif
 
-#if SANITIZER_LINUX
+#if SANITIZER_LINUX && !SANITIZER_NONGNU
 COMPILER_CHECK(sizeof(__sanitizer_mallinfo) == sizeof(struct mallinfo));
 #endif
 
@@ -1236,7 +1237,7 @@ COMPILER_CHECK(__sanitizer_XDR_DECODE == XDR_DECODE);
 COMPILER_CHECK(__sanitizer_XDR_FREE == XDR_FREE);
 #endif
 
-#if SANITIZER_LINUX && !SANITIZER_ANDROID
+#if SANITIZER_LINUX && !SANITIZER_ANDROID && !SANITIZER_NONGNU
 COMPILER_CHECK(sizeof(__sanitizer_FILE) <= sizeof(FILE));
 CHECK_SIZE_AND_OFFSET(FILE, _flags);
 CHECK_SIZE_AND_OFFSET(FILE, _IO_read_ptr);
@@ -1255,7 +1256,7 @@ CHECK_SIZE_AND_OFFSET(FILE, _chain);
 CHECK_SIZE_AND_OFFSET(FILE, _fileno);
 #endif
 
-#if SANITIZER_LINUX && !SANITIZER_ANDROID
+#if SANITIZER_LINUX && !SANITIZER_ANDROID && !SANITIZER_NONGNU
 COMPILER_CHECK(sizeof(__sanitizer__obstack_chunk) <= sizeof(_obstack_chunk));
 CHECK_SIZE_AND_OFFSET(_obstack_chunk, limit);
 CHECK_SIZE_AND_OFFSET(_obstack_chunk, prev);
