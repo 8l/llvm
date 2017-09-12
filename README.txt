@@ -16,3 +16,5 @@ documentation setup.
 If you are writing a package for LLVM, see docs/Packaging.rst for our
 suggestions.
 
+mkdir ../build && cp run.sh ../build && cd ../build
+./run.sh
