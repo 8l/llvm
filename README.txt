@@ -16,5 +16,23 @@ documentation setup.
 If you are writing a package for LLVM, see docs/Packaging.rst for our
 suggestions.
 
-mkdir ../build && cp run.sh ../build && cd ../build
-./run.sh
+sudo apk add libffi-dev
+sudo apk add sphinx
+sudo apk add sphinx-doc
+sudo apk add sphinx-python
+sudo apk add py2-sphinx
+sudo apk add binutils-gold
+
+# manual build and install z3
+https://github.com/Z3Prover/z3
+
+$ mkdir ../build && cp run.sh ../build && cd ../build
+$ ./run.sh
+$ sudo make install
+
+$ clang --version
+clang version 5.0.0 (tags/RELEASE_500/final)
+Target: x86_64-alpine-linux-musl
+Thread model: posix
+InstalledDir: /usr/bin
+
