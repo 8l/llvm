@@ -16,6 +16,7 @@ documentation setup.
 If you are writing a package for LLVM, see docs/Packaging.rst for our
 suggestions.
 
+sudo apk add cmake 
 sudo apk add libffi-dev
 sudo apk add sphinx
 sudo apk add sphinx-doc
